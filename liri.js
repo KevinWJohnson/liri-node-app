@@ -20,6 +20,10 @@ var inputString = process.argv;
 var liriCommand = inputString[2];
 
 // Caputures the command line parameter
+// For the move name see video about how to
+// capture multiple words in the argument
+// in gitHub in Class videos
+
 var liriParameter = inputString[3];
 
 

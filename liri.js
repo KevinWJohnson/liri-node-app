@@ -213,8 +213,8 @@ request(queryUrl, function(error, response, body) {
     console.log("IMBD Rating of the movie: " + JSON.parse(body).imdbRating);
 
 
-    console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings.Source[1].Value);
-   // console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body['Rotten Tomatoes']));
+    //console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings.Source[1].Value);
+    console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings[1].Value);
     console.log("The country where the movie was produced: " + JSON.parse(body).Country);
     console.log("Language of the movie: " + JSON.parse(body).Language);
     console.log("Plot of the movie: " + JSON.parse(body).Plot);

@@ -128,7 +128,8 @@ function songInfo() {
         for (var k = 0; k < data.tracks.items[i].album.artists.length; k++) {
           if (data.tracks.items[i].album.artists[k].name === "Ace of Base") {
             console.log("------Default Song Data --------")
-            console.log("Song Name: " + "'" + songName.toUpperCase() + "'");
+            console.log("Song Name Searched: " + "'" + songName.toUpperCase() + "'");
+            console.log("Song Name Found: " + data.tracks.items[i].name);
             console.log("Album Name: " + data.tracks.items[i].album.name);
             console.log("Artist Name: " + data.tracks.items[i].album.artists[k].name);
             console.log("Preview Link: " + data.tracks.items[i].preview_url);
@@ -161,7 +162,8 @@ function songInfo() {
       for (var i = 0; i < data.tracks.items.length; i++) {
         var j = i + 1;
         console.log("-------Song Data Number " + j + "--------")
-        console.log("Song Name: " + "'" + songName.toUpperCase() + "'");
+        console.log("Song Name Searched: " + "'" + songName.toUpperCase() + "'");
+        console.log("Song Name Found: " + data.tracks.items[i].name);
         console.log("Album Name: " + data.tracks.items[i].album.name);
 
         for (var k = 0; k < data.tracks.items[i].album.artists.length; k++) {
@@ -191,6 +193,11 @@ for (var i = 3; i < nodeArgs.length; i++) {
   }
 }
 
+// Setting up the default movie - if no movie is entered
+if(movieName === "") {
+  movieName = "Mr. Nobody"
+}
+
 // Then run a request to the OMDB API with the movie specified
 var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
@@ -199,7 +206,7 @@ var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey
 
 request(queryUrl, function(error, response, body) {
 
-  console.log(JSON.stringify(body, null, 2));
+  //console.log(JSON.stringify(body, null, 2));
 
   // If the request is successful
   if (!error && response.statusCode === 200) {

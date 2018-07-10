@@ -43,7 +43,7 @@ else if (liriCommand === "spotify-this-song") {
 }
 
 else if (liriCommand === "movie-this") {
-  // Commands for OMDB
+  movieInfo();
 }
 
 else if (liriCommand === "do-what-it-says") {
@@ -172,6 +172,55 @@ function songInfo() {
       }
     });
   }
+}
+
+function movieInfo(){
+// Commands for OMDB
+
+// Create an empty variable for holding the movie name
+var movieName = "";
+
+// Loop through all the words in the node argument
+// And do a little for-loop magic to handle the inclusion of "+"s
+for (var i = 3; i < nodeArgs.length; i++) {
+  if (i > 3 && i < nodeArgs.length) {
+    movieName = movieName + "+" + nodeArgs[i];
+  }
+  else {
+    movieName += nodeArgs[i];
+  }
+}
+
+// Then run a request to the OMDB API with the movie specified
+var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+
+// This line is just to help us debug against the actual URL.
+//console.log(queryUrl);
+
+request(queryUrl, function(error, response, body) {
+
+  console.log(JSON.stringify(body, null, 2));
+
+  // If the request is successful
+  if (!error && response.statusCode === 200) {
+
+    // Parse the body of the site and recover just the imdbRating
+    // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
+    
+    console.log("---------------- Movie Data Below ----------------");
+    console.log("Title of the movie: " + JSON.parse(body).Title);
+    console.log("Year the movie came out: " + JSON.parse(body).Year);
+    console.log("IMBD Rating of the movie: " + JSON.parse(body).imdbRating);
+
+
+    console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings.Source[1].Value);
+   // console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body['Rotten Tomatoes']));
+    console.log("The country where the movie was produced: " + JSON.parse(body).Country);
+    console.log("Language of the movie: " + JSON.parse(body).Language);
+    console.log("Plot of the movie: " + JSON.parse(body).Plot);
+    console.log("Actors in the movie: " + JSON.parse(body).Actors);
+  }
+});
 
 
 }

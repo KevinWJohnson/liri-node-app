@@ -47,8 +47,7 @@ else if (liriCommand === "movie-this") {
 }
 
 else if (liriCommand === "do-what-it-says") {
-  // fs Node package uses random.txt to
-  // call one of LIRI's commands
+  fileReadCommand()
 }
 
 
@@ -176,58 +175,111 @@ function songInfo() {
   }
 }
 
-function movieInfo(){
-// Commands for OMDB
+function movieInfo() {
+  // Commands for OMDB
 
-// Create an empty variable for holding the movie name
-var movieName = "";
+  // Create an empty variable for holding the movie name
+  var movieName = "";
 
-// Loop through all the words in the node argument
-// And do a little for-loop magic to handle the inclusion of "+"s
-for (var i = 3; i < nodeArgs.length; i++) {
-  if (i > 3 && i < nodeArgs.length) {
-    movieName = movieName + "+" + nodeArgs[i];
+  // Loop through all the words in the node argument
+  // And do a little for-loop magic to handle the inclusion of "+"s
+  for (var i = 3; i < nodeArgs.length; i++) {
+    if (i > 3 && i < nodeArgs.length) {
+      movieName = movieName + "+" + nodeArgs[i];
+    }
+    else {
+      movieName += nodeArgs[i];
+    }
   }
-  else {
-    movieName += nodeArgs[i];
+
+  // Setting up the default movie - if no movie is entered
+  if (movieName === "") {
+    movieName = "Mr. Nobody"
   }
+
+  // Then run a request to the OMDB API with the movie specified
+  var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+
+  // This line is just to help us debug against the actual URL.
+  //console.log(queryUrl);
+
+  request(queryUrl, function (error, response, body) {
+
+    //console.log(JSON.stringify(body, null, 2));
+
+    // If the request is successful
+    if (!error && response.statusCode === 200) {
+
+      // Parse the body of the site and recover just the imdbRating
+      // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
+
+      console.log("---------------- Movie Data Below ----------------");
+      console.log("Title of the movie: " + JSON.parse(body).Title);
+      console.log("Year the movie came out: " + JSON.parse(body).Year);
+      console.log("IMBD Rating of the movie: " + JSON.parse(body).imdbRating);
+
+
+      //console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings.Source[1].Value);
+      console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings[1].Value);
+      console.log("The country where the movie was produced: " + JSON.parse(body).Country);
+      console.log("Language of the movie: " + JSON.parse(body).Language);
+      console.log("Plot of the movie: " + JSON.parse(body).Plot);
+      console.log("Actors in the movie: " + JSON.parse(body).Actors);
+    }
+  });
 }
 
-// Setting up the default movie - if no movie is entered
-if(movieName === "") {
-  movieName = "Mr. Nobody"
-}
+function fileReadCommand() {
+  // fs Node package uses random.txt to
+  // call one of LIRI's commands
 
-// Then run a request to the OMDB API with the movie specified
-var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+// fs is a core Node package for reading and writing files
+var fs = require("fs");
 
-// This line is just to help us debug against the actual URL.
-//console.log(queryUrl);
+// This block of code will read from the "random.txt" file.
+// It's important to include the "utf8" parameter or the code will provide stream data (garbage)
+// The code will store the contents of the reading inside the variable "data"
+fs.readFile("random.txt", "utf8", function(error, data) {
 
-request(queryUrl, function(error, response, body) {
+  // If the code experiences any errors it will log the error to the console.
+  if (error) {
+    return console.log(error);
+  }
 
-  //console.log(JSON.stringify(body, null, 2));
+  // We will then print the contents of data
+  console.log(data);
 
-  // If the request is successful
-  if (!error && response.statusCode === 200) {
+  // Then split it by commas (to make it more readable)
+  //var dataArr = data.split(",");
 
-    // Parse the body of the site and recover just the imdbRating
-    // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-    
-    console.log("---------------- Movie Data Below ----------------");
-    console.log("Title of the movie: " + JSON.parse(body).Title);
-    console.log("Year the movie came out: " + JSON.parse(body).Year);
-    console.log("IMBD Rating of the movie: " + JSON.parse(body).imdbRating);
+  // We will then re-display the content as an array for later use.
+  //console.log(dataArr);
 
 
-    //console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings.Source[1].Value);
-    console.log("Rotten Tomatoes Rating of the movie: " + JSON.parse(body).Ratings[1].Value);
-    console.log("The country where the movie was produced: " + JSON.parse(body).Country);
-    console.log("Language of the movie: " + JSON.parse(body).Language);
-    console.log("Plot of the movie: " + JSON.parse(body).Plot);
-    console.log("Actors in the movie: " + JSON.parse(body).Actors);
+
+songName = data
+spotify.search({ type: 'track', query: songName }, function (err, data) {
+  if (err) {
+    return console.log('Error occurred: ' + err);
+  }
+
+  //console.log(JSON.stringify(data, null, 2));
+
+  console.log("---------------- Song Data Below ----------------");
+
+  for (var i = 0; i < data.tracks.items.length; i++) {
+    var j = i + 1;
+    console.log("-------Song Data Number " + j + "--------")
+    console.log("Song Name Searched: " + "'" + songName.toUpperCase() + "'");
+    console.log("Song Name Found: " + data.tracks.items[i].name);
+    console.log("Album Name: " + data.tracks.items[i].album.name);
+
+    for (var k = 0; k < data.tracks.items[i].album.artists.length; k++) {
+      console.log("Artist(s) Name: " + data.tracks.items[i].album.artists[k].name);
+    }
+
+    console.log("Preview Link: " + data.tracks.items[i].preview_url);
   }
 });
-
-
+});
 }

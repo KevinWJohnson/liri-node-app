@@ -34,32 +34,6 @@ var liriCommand = nodeArgs[2];
 // Determines the command selected...
 // Based on the command we run the appropriate set of commands
 if (liriCommand === "my-tweets") {
-  myTweetsListed();
-}
-
-else if (liriCommand === "spotify-this-song") {
-  songInfo();
-
-}
-
-else if (liriCommand === "movie-this") {
-  // Commands for OMDB
-}
-
-else if (liriCommand === "do-what-it-says") {
-  // fs Node package uses random.txt to
-  // call one of LIRI's commands
-}
-
-
-else {
-  notRecognized = "Not a recognized command";
-}
-
-
-// ----------- Functions -----------
-
-function myTweetsListed() {
 
   // Commands for Twitter
 
@@ -85,10 +59,14 @@ function myTweetsListed() {
       console.log("Twitter Error");
     }
   });
+
+
 }
 
+else if (liriCommand === "spotify-this-song") {
 
-function songInfo() {
+  // Commands for Spotify
+
   var songName = "";
 
   // Get the Song Name
@@ -99,9 +77,6 @@ function songInfo() {
 
   // Taking off the space in front of the song name
   songName = songName.substr(1);
-  console.log("SongName: " + songName)
-
-  // Commands for Spotify
 
   // If no song name was entered default to "The Sign" by the Ace of Base
   if (songName === "") {
@@ -133,30 +108,31 @@ function songInfo() {
             console.log("Artist Name: " + data.tracks.items[i].album.artists[k].name);
             console.log("Preview Link: " + data.tracks.items[i].preview_url);
           }
-
+          
         }
 
-
+        
         // console.log("URL: " + data.tracks.items[i].album.external_urls.spotify);
 
       }
     });
   }
   else {
-
     //console.log(nodeArgs.length);
     //console.log(songName);
-    // spotify.search({ type: 'track', query: 'You are my sunshine', limit: 1 }, function (err, data) {
-
 
     spotify.search({ type: 'track', query: songName }, function (err, data) {
       if (err) {
         return console.log('Error occurred: ' + err);
       }
 
-      //console.log(JSON.stringify(data, null, 2));
+      //console.log(JSON.stringify(data,null,2));
 
       console.log("---------------- Song Data Below ----------------");
+      //console.log("data.length: "+ data.length);
+      //console.log("data: "+ data);
+      //console.log("data.tracks.items.length: "+ data.tracks.items.length);
+      //console.log("data.tracks.items.length: "+ data.tracks.items.length);
 
       for (var i = 0; i < data.tracks.items.length; i++) {
         var j = i + 1;
@@ -169,9 +145,26 @@ function songInfo() {
         }
 
         console.log("Preview Link: " + data.tracks.items[i].preview_url);
+        // console.log("URL: " + data.tracks.items[i].album.external_urls.spotify);
+
       }
     });
+
   }
 
 
+}
+
+else if (liriCommand === "movie-this") {
+  // Commands for OMDB
+}
+
+else if (liriCommand === "do-what-it-says") {
+  // fs Node package uses random.txt to
+  // call one of LIRI's commands
+}
+
+
+else {
+  notRecognized = "Not a recognized command";
 }

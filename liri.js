@@ -11,7 +11,7 @@ var Spotify = require("node-spotify-api");
 // Include the request npm package
 var request = require("request");
 
-var keys = require("./keys.js"); 
+var keys = require("./keys.js");
 
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
@@ -25,43 +25,37 @@ var client = new Twitter(keys.twitter);
 
 
 // Takes in all of the command line arguments
-var inputString = process.argv;
+var nodeArgs = process.argv;
 
 // Caputures the command line argument
-var liriCommand = inputString[2];
-
-// Caputures the command line parameter
-// For the move name see video about how to
-// capture multiple words in the argument
-// in gitHub in Class videos
-
-var liriParameter = inputString[3];
+var liriCommand = nodeArgs[2];
 
 
 // Determines the command selected...
 // Based on the command we run the appropriate set of commands
 if (liriCommand === "my-tweets") {
+
   // Commands for Twitter
-  
+
   // Setting up the prams
   var params = {
     user_id: "1016003213256896513",
     count: 20
   };
 
-// Twitter get command
+  // Twitter get command
   client.get('statuses/user_timeline', params, function (error, tweets, response) {
     if (!error) {
-     console.log("------ Start of Tweets--------")
-  for (var i = 0; i < tweets.length; i++) {
-    var j = i+1;
-    console.log("-------Tweet Number "+j+"--------")
-    console.log(tweets[i].text);
-  }
-  console.log("------ End of Tweets--------")
-    
+      console.log("------ Start of Tweets--------")
+      for (var i = 0; i < tweets.length; i++) {
+        var j = i + 1;
+        console.log("-------Tweet Number " + j + "--------")
+        console.log(tweets[i].text);
+      }
+      console.log("------ End of Tweets--------")
 
-    } else{
+
+    } else {
       console.log("Twitter Error");
     }
   });
@@ -70,7 +64,95 @@ if (liriCommand === "my-tweets") {
 }
 
 else if (liriCommand === "spotify-this-song") {
+
   // Commands for Spotify
+
+  var songName = "";
+
+  // Get the Song Name
+  // Loop through all the words in the node argument
+  for (var i = 3; i < nodeArgs.length; i++) {
+    songName = songName + " " + nodeArgs[i];
+  }
+
+  // Taking off the space in front of the song name
+  songName = songName.substr(1);
+
+  // If no song name was entered default to "The Sign" by the Ace of Base
+  if (songName === "") {
+
+    songName = "The Sign"
+
+    spotify.search({ type: 'track', query: songName }, function (err, data) {
+      if (err) {
+        return console.log('Error occurred: ' + err);
+      }
+
+      //console.log(JSON.stringify(data,null,2));
+
+      console.log("---------------- Song Data Below ----------------");
+      //console.log("data.length: "+ data.length);
+      //console.log("data: "+ data);
+      //console.log("data.tracks.items.length: "+ data.tracks.items.length);
+      //console.log("data.tracks.items.length: "+ data.tracks.items.length);
+
+      for (var i = 0; i < data.tracks.items.length; i++) {
+        var j = i + 1;
+
+
+        for (var k = 0; k < data.tracks.items[i].album.artists.length; k++) {
+          if (data.tracks.items[i].album.artists[k].name === "Ace of Base") {
+            console.log("------Default Song Data --------")
+            console.log("Song Name: " + "'" + songName.toUpperCase() + "'");
+            console.log("Album Name: " + data.tracks.items[i].album.name);
+            console.log("Artist Name: " + data.tracks.items[i].album.artists[k].name);
+            console.log("Preview Link: " + data.tracks.items[i].preview_url);
+          }
+          
+        }
+
+        
+        // console.log("URL: " + data.tracks.items[i].album.external_urls.spotify);
+
+      }
+    });
+  }
+  else {
+    //console.log(nodeArgs.length);
+    //console.log(songName);
+
+    spotify.search({ type: 'track', query: songName }, function (err, data) {
+      if (err) {
+        return console.log('Error occurred: ' + err);
+      }
+
+      //console.log(JSON.stringify(data,null,2));
+
+      console.log("---------------- Song Data Below ----------------");
+      //console.log("data.length: "+ data.length);
+      //console.log("data: "+ data);
+      //console.log("data.tracks.items.length: "+ data.tracks.items.length);
+      //console.log("data.tracks.items.length: "+ data.tracks.items.length);
+
+      for (var i = 0; i < data.tracks.items.length; i++) {
+        var j = i + 1;
+        console.log("-------Song Data Number " + j + "--------")
+        console.log("Song Name: " + "'" + songName.toUpperCase() + "'");
+        console.log("Album Name: " + data.tracks.items[i].album.name);
+
+        for (var k = 0; k < data.tracks.items[i].album.artists.length; k++) {
+          console.log("Artist(s) Name: " + data.tracks.items[i].album.artists[k].name);
+        }
+
+        console.log("Preview Link: " + data.tracks.items[i].preview_url);
+        // console.log("URL: " + data.tracks.items[i].album.external_urls.spotify);
+
+      }
+    });
+
+  }
+
+
 }
 
 else if (liriCommand === "movie-this") {
@@ -86,52 +168,3 @@ else if (liriCommand === "do-what-it-says") {
 else {
   notRecognized = "Not a recognized command";
 }
-
-
-// Prints the outputNumber
-console.log("notRecognized");
-
-// =======================================================
-
-// // Include the request npm package (Don't forget to run "npm install request" in this folder first!)
-// var request = require("request");
-
-// // Store all of the arguments in an array
-// var nodeArgs = process.argv;
-
-// // Create an empty variable for holding the movie name
-// var movieName = "";
-
-// // Loop through all the words in the node argument
-// // And do a little for-loop magic to handle the inclusion of "+"s
-// for (var i = 2; i < nodeArgs.length; i++) {
-
-//   if (i > 2 && i < nodeArgs.length) {
-
-//     movieName = movieName + "+" + nodeArgs[i];
-
-//   }
-
-//   else {
-
-//     movieName += nodeArgs[i];
-
-//   }
-// }
-
-// // Then run a request to the OMDB API with the movie specified
-// var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-
-// // This line is just to help us debug against the actual URL.
-// console.log(queryUrl);
-
-// request(queryUrl, function (error, response, body) {
-
-//   // If the request is successful
-//   if (!error && response.statusCode === 200) {
-
-//     // Parse the body of the site and recover just the imdbRating
-//     // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-//     console.log("Release Year: " + JSON.parse(body).Year);
-//   }
-// });

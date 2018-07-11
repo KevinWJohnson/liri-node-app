@@ -30,9 +30,6 @@ var nodeArgs = process.argv;
 // Caputures the command line argument
 var liriCommand = nodeArgs[2];
 
-// Caputures the Twitter User
-var userTwitter = process.argv[3];
-
 
 // Determines the command selected...
 // Based on the command we run the appropriate set of commands
@@ -64,21 +61,26 @@ function myTweetsListed() {
 
   // Commands for Twitter
 
-  // Twitter User Name: CBCHWLIRI
+  // Setting up the prams
+  var params = {
+    user_id: "1016003213256896513",
+    count: 20
+  };
 
   // Twitter get command
-  var params = { screen_name: userTwitter };
-
   client.get('statuses/user_timeline', params, function (error, tweets, response) {
-
     if (!error) {
-      var tweetFrom = "\nTweets from: @" + tweets[0].user.screen_name;
-      console.log(tweetFrom);
-
+      console.log("------ Start of Tweets--------")
       for (var i = 0; i < tweets.length; i++) {
-        var twitterResponse = "\n---------\n" + "Tweet: " + tweets[i].text + "\nDate of Tweet " + tweets[i].created_at;
-        console.log(twitterResponse);
+        var j = i + 1;
+        console.log("-------Tweet Number " + j + "--------")
+        console.log(tweets[i].text);
       }
+      console.log("------ End of Tweets--------")
+
+
+    } else {
+      console.log("Twitter Error");
     }
   });
 }

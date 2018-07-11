@@ -47,12 +47,11 @@ else if (liriCommand === "movie-this") {
 }
 
 else if (liriCommand === "do-what-it-says") {
-  fileReadCommand()
+  fileReadCommand();
 }
 
-
 else {
-  notRecognized = "Not a recognized command";
+  console.log("Not a recognized command");
 }
 
 
@@ -233,53 +232,55 @@ function fileReadCommand() {
   // fs Node package uses random.txt to
   // call one of LIRI's commands
 
-// fs is a core Node package for reading and writing files
-var fs = require("fs");
+  // fs is a core Node package for reading and writing files
+  var fs = require("fs");
 
-// This block of code will read from the "random.txt" file.
-// It's important to include the "utf8" parameter or the code will provide stream data (garbage)
-// The code will store the contents of the reading inside the variable "data"
-fs.readFile("random.txt", "utf8", function(error, data) {
+  // This block of code will read from the "random.txt" file.
+  // It's important to include the "utf8" parameter or the code will provide stream data (garbage)
+  // The code will store the contents of the reading inside the variable "data"
+  fs.readFile("random.txt", "utf8", function (error, data) {
 
-  // If the code experiences any errors it will log the error to the console.
-  if (error) {
-    return console.log(error);
-  }
-
-  // We will then print the contents of data
-  console.log(data);
-
-  // Then split it by commas (to make it more readable)
-  //var dataArr = data.split(",");
-
-  // We will then re-display the content as an array for later use.
-  //console.log(dataArr);
-
-
-
-songName = data
-spotify.search({ type: 'track', query: songName }, function (err, data) {
-  if (err) {
-    return console.log('Error occurred: ' + err);
-  }
-
-  //console.log(JSON.stringify(data, null, 2));
-
-  console.log("---------------- Song Data Below ----------------");
-
-  for (var i = 0; i < data.tracks.items.length; i++) {
-    var j = i + 1;
-    console.log("-------Song Data Number " + j + "--------")
-    console.log("Song Name Searched: " + "'" + songName.toUpperCase() + "'");
-    console.log("Song Name Found: " + data.tracks.items[i].name);
-    console.log("Album Name: " + data.tracks.items[i].album.name);
-
-    for (var k = 0; k < data.tracks.items[i].album.artists.length; k++) {
-      console.log("Artist(s) Name: " + data.tracks.items[i].album.artists[k].name);
+    // If the code experiences any errors it will log the error to the console.
+    if (error) {
+      return console.log(error);
     }
 
-    console.log("Preview Link: " + data.tracks.items[i].preview_url);
-  }
-});
-});
+    // We will then print the contents of data
+    //console.log(data);
+
+    // Then split it by commas to get songName
+    var dataArr = data.split(",");
+
+    // We will then re-display the content as an array for later use.
+    //console.log(dataArr);
+
+    //console.log("dataArr[1]: " + dataArr[1]);
+
+    // setting the songName
+    songName = dataArr[1];
+
+    spotify.search({ type: 'track', query: songName }, function (err, data) {
+      if (err) {
+        return console.log('Error occurred: ' + err);
+      }
+
+      //console.log(JSON.stringify(data, null, 2));
+
+      console.log("---------------- Song Data Below ----------------");
+
+      for (var i = 0; i < data.tracks.items.length; i++) {
+        var j = i + 1;
+        console.log("-------Song Data Number " + j + "--------")
+        console.log("Song Name Searched: " + "'" + songName.toUpperCase() + "'");
+        console.log("Song Name Found: " + data.tracks.items[i].name);
+        console.log("Album Name: " + data.tracks.items[i].album.name);
+
+        for (var k = 0; k < data.tracks.items[i].album.artists.length; k++) {
+          console.log("Artist(s) Name: " + data.tracks.items[i].album.artists[k].name);
+        }
+
+        console.log("Preview Link: " + data.tracks.items[i].preview_url);
+      }
+    });
+  });
 }
